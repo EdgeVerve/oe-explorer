@@ -1,19 +1,10 @@
-# loopback-component-explorer
+This is a fork of loopback-component-explorer version 4.2.0.
+We've basically removed some dependencies and make changes so that it supports
+oe-cloud project
 
-Browse and test your LoopBack app's APIs.
+# oe-explorer
 
-## Supported versions
-
-Current|Long Term Support
-:-:|:-:
-4.x|2.x
-
-Learn more about our LTS plan in [docs](http://loopback.io/doc/en/contrib/Long-term-support.html).
-
-*The only difference between 3.x and 4.x versions is which Node.js versions
-are supported (loopback-component-explorer 4.x dropped support for pre-v4
-versions of Node.js). Therefore we decided to not maintain 3.x version line and
-provide LTS support for the 2.x version line instead.*
+Browse and test your oeCloud.io app's APIs.
 
 ## Basic Usage
 
@@ -39,73 +30,6 @@ app.use('/explorer', explorer.routes(app, { basePath: '/api' }));
 console.log("Explorer mounted at localhost:" + port + "/explorer");
 
 app.listen(port);
-```
-
-## Upgrading from v1.x
-
-To upgrade your application using loopback-explorer version 1.x, just replace
-`explorer()` with `explorer.routes()` in your server script:
-
-```js
-var explorer = require('loopback-component-explorer');  // Module was loopback-explorer in v. 2.0.1 and earlier
-
-// v1.x - does not work anymore
-app.use('/explorer', explorer(app, options);
-// v2.x
-app.use('/explorer', explorer.routes(app, options));
-```
-
-In applications scaffolded by `lb app`, the idiomatic way is to register
-loopback-component-explorer in `server/component-config.json`:
-
-```json
-{
-  "loopback-component-explorer": {
-    "mountPath": "/explorer"
-  }
-}
-```
-
-## Advanced Usage
-
-Many aspects of the explorer are configurable.
-
-See [options](#options) for a description of these options:
-
-```js
-// Mount middleware before calling `explorer()` to add custom headers, auth, etc.
-app.use('/explorer', loopback.basicAuth('user', 'password'));
-explorer(app, {
-  basePath: '/custom-api-root',
-  uiDirs: [
-    path.resolve(__dirname, 'public'),
-    path.resolve(__dirname, 'node_modules', 'swagger-ui')
-  ]
-  apiInfo: {
-    'title': 'My API',
-    'description': 'Explorer example app.'
-  },
-  resourcePath: 'swagger.json',
-  version: '0.1-unreleasable'
-}));
-app.use('/custom-api-root', loopback.rest());
-```
-In applications scaffolded by `lb app`, you can edit the `server/component-config.json`:
-
-```json
-{
-  "loopback-component-explorer": {
-    "mountPath": "/explorer",
-    "apiInfo": {
-      "title": "My App",
-      "description": "Description of my app APIs.",
-      "termsOfServiceUrl": "http://api.mycompany.io/terms/",
-      "contact": "apiteam@mycompany.io",
-      "license": "Apache 2.0",
-      "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
-  }
-}
 ```
 
 ## Options
