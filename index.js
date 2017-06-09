@@ -19,8 +19,6 @@ var urlJoin = require('./lib/url-join');
 var _defaults = require('lodash').defaults;
 var cors = require('cors');
 var createSwaggerObject = require('loopback-swagger').generateSwaggerSpec;
-var SWAGGER_UI_ROOT = require('swagger-ui/index').dist;
-var STATIC_ROOT = path.join(__dirname, 'public');
 
 module.exports = explorer;
 explorer.routes = routes;
@@ -44,7 +42,7 @@ function routes(loopbackApplication, options) {
   loopback.version.split('.')[0] || 1;
 
   if (loopbackMajor < 2) {
-    throw new Error(g.f('{{loopback-component-explorer}} requires ' +
+    throw new Error(g.f('{{oe-explorer}} requires ' +
       '{{loopback}} 2.0 or newer'));
   }
 
@@ -88,11 +86,6 @@ function routes(loopbackApplication, options) {
       }
     }
 
-    // File in node_modules are overridden by a few customizations
-    router.use(loopback.static(STATIC_ROOT));
-
-    // Swagger UI distribution
-    router.use(loopback.static(SWAGGER_UI_ROOT));
   }
 
   return router;
