@@ -169,6 +169,12 @@ function createSwaggerObject(loopbackApplication, opts) {
               lbSwaggerOBj.definitions[lbKey].properties[modelKey].enum = enums
             }
           }
+          // Handling the refcodetype cases.
+          if (prop && prop.refcodetype && lbSwaggerOBj.definitions[lbKey].properties
+              && lbSwaggerOBj.definitions[lbKey].properties[modelKey]) {
+            // Adding the comment giving details about refcode to the corresponding model.
+            lbSwaggerOBj.definitions[lbKey].properties[modelKey].refcode = "This is of type refcode '" + prop.refcodetype + "'";
+          }
         });
       }
     });
