@@ -18,7 +18,7 @@ var path = require('path');
 var urlJoin = require('./lib/url-join');
 var _defaults = require('lodash').defaults;
 var cors = require('cors');
-var createSwaggerObject = require('loopback-swagger').generateSwaggerSpec;
+var genSwaggerObjFromLB = require('loopback-swagger').generateSwaggerSpec;
 
 module.exports = explorer;
 explorer.routes = routes;
@@ -124,6 +124,62 @@ function mountSwagger(loopbackApplication, swaggerApp, opts) {
   swaggerApp.get(resourcePath, function sendSwaggerObject(req, res) {
     res.status(200).send(swaggerObject);
   });
+}
+
+/**
+ * Generate Swagger Object and update it according to needs of oecloud.io.
+ *
+ * @param {Application} loopbackApplication The loopback application to
+ * document.
+ * @param {Object} opts Options.
+ */
+function createSwaggerObject(loopbackApplication, opts) {
+  // Calling loopback-swagger to generate Swagger Object.
+  var lbSwaggerOBj = genSwaggerObjFromLB(loopbackApplication, opts);
+  // Checking presence of generated object and defintions
+  // For oecloud.io related changes we are modifying definitions.
+  if (lbSwaggerOBj && lbSwaggerOBj.definitions) {
+    // Looping through definitions keys
+    Object.keys(lbSwaggerOBj.definitions).forEach((lbKey) => {
+      // Getting Model from the defintion
+      var model = loopbackApplication.models[lbKey];
+      // Checking presence of models definition and its properties
+      if (model && model.definition && model.definition.properties) {
+        // Looping through model.definition.properties
+        Object.keys(model.definition.properties).forEach((modelKey) => {
+          const prop = model.definition.properties[modelKey];
+          // Handling the enum cases.
+          if (prop && prop.enumtype) {
+            const enumModel = loopbackApplication.models[prop.enumtype];
+            if (enumModel && enumModel.settings && enumModel.settings.enumList
+                  && lbSwaggerOBj.definitions[lbKey].properties && lbSwaggerOBj.definitions[lbKey].properties[modelKey]) {
+              // Retrieving enum values from the enumList
+              /**
+               * enumList example:
+               * [{
+               *    "code": "A",
+               *    "description": "Annual"
+               * },
+               * {
+               *    "code": "M",
+               *    "description": "Monthly"
+               * }]
+               */
+              const enums = enumModel.settings.enumList.map((obj) => {return obj.code;});
+              lbSwaggerOBj.definitions[lbKey].properties[modelKey].enum = enums
+            }
+          }
+          // Handling the refcodetype cases.
+          if (prop && prop.refcodetype && lbSwaggerOBj.definitions[lbKey].properties
+              && lbSwaggerOBj.definitions[lbKey].properties[modelKey]) {
+            // Adding the comment giving details about refcode to the corresponding model.
+            lbSwaggerOBj.definitions[lbKey].properties[modelKey].refcode = "This is of type refcode '" + prop.refcodetype + "'";
+          }
+        });
+      }
+    });
+  }
+  return lbSwaggerOBj;
 }
 
 function setupCors(swaggerApp, remotes) {
