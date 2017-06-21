@@ -179,6 +179,33 @@ function createSwaggerObject(loopbackApplication, opts) {
           }
         });
       }
+
+      // Handling Relations
+      if (model && model.relations) {
+        Object.keys(model.relations).forEach((relKey) => {
+          const relation = model.relations[relKey];
+          // Handling belongsTo relationship
+          // Checking presence of required values in relation
+          if (relation && relation.type && relation.type === 'belongsTo' && relation.keyFrom && relation.modelTo) {
+            // Checking presence of required values in model definition
+            if (model.definition && model.definition.settings && model.definition.settings.relations 
+                && model.definition.settings.relations[relKey]) {
+              // Checking presence of required values in loopback swagger object
+              if (lbSwaggerOBj.definitions[lbKey] && lbSwaggerOBj.definitions[lbKey].properties 
+                  && lbSwaggerOBj.definitions[lbKey].properties[relation.keyFrom]) {
+                // Hardcoding type as string
+                const obj = {
+                  type: "string",
+                  description: model.definition.settings.relations[relKey].description || ("This property has belongsTo relationship with '" + relation.modelTo.modelName + "' model.")
+                };
+                // Overriding the Swagger object definition for the model having belongsTo relationship.
+                lbSwaggerOBj.definitions[lbKey].properties[relation.keyFrom] = obj;
+              }
+            }
+          }
+        });
+      }
+
     });
   }
   return lbSwaggerOBj;
