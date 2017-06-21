@@ -23,6 +23,8 @@ var genSwaggerObjFromLB = require('loopback-swagger').generateSwaggerSpec;
 module.exports = explorer;
 explorer.routes = routes;
 
+explorer.createSwaggerObject = createSwaggerObject;
+
 /**
  * Example usage:
  *
