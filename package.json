@@ -1,6 +1,6 @@
 {
   "name": "oe-explorer",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Browse and test your LoopBack app's APIs",
   "engines": {
     "node": ">=4"
@@ -40,7 +40,6 @@
     "depd": "^1.1.0",
     "lodash": "^3.10.0",
     "loopback-swagger": "^3.0.1",
-    "strong-globalize": "^2.6.2",
-    "swagger-ui": "^2.2.5"
+    "strong-globalize": "^2.6.2"
   }
 }
